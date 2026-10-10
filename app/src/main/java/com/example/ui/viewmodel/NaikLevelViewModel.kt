@@ -1,3 +1,4 @@
+
 package com.example.ui.viewmodel
 
 import android.app.Application
@@ -12,7 +13,6 @@ import com.example.data.local.NaikLevelDatabase
 import com.example.data.local.QuestEntity
 import com.example.data.local.SavedAttachment
 import com.example.data.local.UserProgressEntity
-import com.example.data.local.XpTransactionEntity
 import com.example.data.model.CustomExamConfig
 import com.example.data.model.CustomExamGenerator
 import com.example.data.model.ExamBank
@@ -20,7 +20,6 @@ import com.example.data.model.ExamQuestion
 import com.example.data.model.SibiBook
 import com.example.data.model.SibiCatalog
 import com.example.data.sibi.SibiLinks
-import com.example.data.model.SibiChapter
 import com.example.data.repository.NaikLevelRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,8 +30,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONObject
 
 sealed class ExtractionStatus {
     object Idle : ExtractionStatus()
@@ -274,7 +271,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
         _tutorContextSource.asStateFlow()
 
     private val _tutorMessages =
-        MutableStateFlow<List<AiTutorMessage>>(
+        MutableStateFlow(
             listOf(
                 AiTutorMessage(
                     sender = "ai",
@@ -414,9 +411,8 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.updateReadingProgress(current.id, progress)
-
-            val updated = repository.getMaterialById(current.id)
-            _activeReadingMaterial.value = updated
+            _activeReadingMaterial.value =
+                repository.getMaterialById(current.id)
         }
     }
 
@@ -425,9 +421,8 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.updateReadingProgress(current.id, 1.0f)
-
-            val updated = repository.getMaterialById(current.id)
-            _activeReadingMaterial.value = updated
+            _activeReadingMaterial.value =
+                repository.getMaterialById(current.id)
 
             _userNotice.value =
                 "Selamat! Materi selesai dipelajari (+40 XP)."
@@ -477,11 +472,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
                 }
 
             val topic =
-                if (attachment.displayName.endsWith(
-                        ".pdf",
-                        ignoreCase = true
-                    )
-                ) {
+                if (attachment.displayName.endsWith(".pdf", ignoreCase = true)) {
                     "Dokumen Belajar Digital"
                 } else {
                     "Catatan Visual"
@@ -492,12 +483,12 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
                     # $formattedTitle
 
                     ## Ringkasan Catatan Visual
-                    Materi ini diekstrak dari gambar/foto dokumen (${attachment.displayName}, ${attachment.sizeBytes / 1024} KB).
+                    Materi ini berasal dari gambar/foto dokumen (${attachment.displayName}, ${attachment.sizeBytes / 1024} KB).
 
                     ### Poin-Poin Utama
-                    - Telah tersimpan aman dalam memori internal aplikasi NaikLevel.
-                    - Lampiran gambar dapat dilihat langsung saat membuka materi ini.
-                    - Kamu dapat menambahkan catatan penjelasan lebih mendalam di bawah ini.
+                    - Lampiran tersimpan di penyimpanan internal aplikasi NaikLevel.
+                    - Lampiran gambar dapat dilihat saat membuka materi.
+                    - Tambahkan catatan penjelasan lebih mendalam pada editor.
                 """.trimIndent()
 
                 else -> """
@@ -507,15 +498,13 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
                     Dokumen lampiran (${attachment.displayName}, tipe ${attachment.type}) berhasil ditautkan.
 
                     ### Pembahasan Materi
-                    - Berkas dokumen telah dienkapsulasi pada folder aplikasi: attachments/${attachment.displayName}.
-                    - Gunakan editor ini untuk menuliskan ringkasan atau pertanyaan seputar dokumen tersebut.
+                    - Berkas ditautkan dari folder aplikasi: attachments/${attachment.displayName}.
+                    - Gunakan editor untuk menulis ringkasan atau pertanyaan seputar dokumen.
                 """.trimIndent()
             }
 
             _extractionStatus.value =
-                ExtractionStatus.Success(
-                    "Konten berhasil diolah dari lampiran."
-                )
+                ExtractionStatus.Success("Konten berhasil diolah dari lampiran.")
 
             onExtracted(formattedTitle, content, topic)
         }
@@ -588,13 +577,12 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch(Dispatchers.IO) {
             val success = repository.claimQuest(quest.id)
 
-            if (success) {
-                _userNotice.value =
+            _userNotice.value =
+                if (success) {
                     "Berhasil mengklaim +${quest.xpReward} XP untuk quest: ${quest.title}!"
-            } else {
-                _userNotice.value =
+                } else {
                     "Quest belum selesai atau sudah pernah diklaim sebelumnya."
-            }
+                }
         }
     }
 
@@ -611,7 +599,9 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
             isActive = true,
             questions = questions,
             currentQuestionIndex = 0,
-                        isUntimed = false,
+            userAnswers = emptyMap(),
+            remainingSeconds = 300,
+            isUntimed = false,
             isSubmitted = false,
             score = 0,
             correctCount = 0,
@@ -626,118 +616,4 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     fun startCustomExam(config: CustomExamConfig) {
         when (
             val result = CustomExamGenerator.generateQuestions(
-                materials = publishedMaterials.value,
-                sibiBooks = SibiCatalog.books,
-                config = config
-            )
-        ) {
-            is CustomExamGenerator.GenerationResult.Success -> {
-                if (result.questions.isEmpty()) {
-                    _userNotice.value =
-                        "Belum ada soal yang bisa dibuat dari materi pilihan."
-                    return
-                }
-
-                _examSession.value = ExamSessionState(
-                    isActive = true,
-                    questions = result.questions.take(config.questionCount),
-                    currentQuestionIndex = 0,
-                    userAnswers = emptyMap(),
-                    remainingSeconds = config.timeLimitMinutes * 60,
-                    isUntimed = config.timeLimitMinutes == 0,
-                    subject = config.examTitle,
-                    schoolLevel = "Kustom",
-                    sourceMaterialTitle = result.sourceTitles.joinToString(", "),
-                    isCustomExam = true
-                )
-            }
-
-            is CustomExamGenerator.GenerationResult.Error -> {
-                _userNotice.value = result.message
-            }
-        }
-    }
-
-    fun selectExamAnswer(questionId: Int, optionIndex: Int) {
-        val session = _examSession.value
-        if (!session.isActive || session.isSubmitted) return
-
-        val question = session.questions.find { it.id == questionId }
-            ?: return
-
-        if (optionIndex !in question.options.indices) return
-
-        _examSession.value = session.copy(
-            userAnswers = session.userAnswers + (questionId to optionIndex)
-        )
-    }
-
-    fun nextExamQuestion() {
-        val session = _examSession.value
-        if (session.currentQuestionIndex < session.questions.lastIndex) {
-            _examSession.value = session.copy(
-                currentQuestionIndex = session.currentQuestionIndex + 1
-            )
-        }
-    }
-
-    fun previousExamQuestion() {
-        val session = _examSession.value
-        if (session.currentQuestionIndex > 0) {
-            _examSession.value = session.copy(
-                currentQuestionIndex = session.currentQuestionIndex - 1
-            )
-        }
-    }
-
-    fun submitExamSimulation() {
-        val session = _examSession.value
-        if (!session.isActive || session.isSubmitted) return
-
-        val correct = session.questions.count { question ->
-            session.userAnswers[question.id] == question.correctAnswerIndex
-        }
-
-        val score = if (session.questions.isNotEmpty()) {
-            correct * 100 / session.questions.size
-        } else {
-            0
-        }
-
-        val earnedXp = 30 + score / 2
-
-        _examSession.value = session.copy(
-            isSubmitted = true,
-            score = score,
-            correctCount = correct,
-            earnedXp = earnedXp
-        )
-
-        viewModelScope.launch {
-            repository.recordExamAttempt(
-                subject = session.subject,
-                schoolLevel = session.schoolLevel,
-                totalQuestions = session.questions.size,
-                correctAnswers = correct,
-                durationSeconds = if (session.isUntimed) {
-                    0
-                } else {
-                    (300 - session.remainingSeconds).coerceAtLeast(0)
-                },
-                sourceMaterialTitle = session.sourceMaterialTitle,
-                isCustomExam = session.isCustomExam
-            )
-
-            _userNotice.value =
-                "Ujian selesai! Nilai: $score, benar: $correct/${session.questions.size}."
-        }
-    }
-
-    fun closeExamSession() {
-        _examSession.value = ExamSessionState()
-    }
-}
-            userAnswers = emptyMap(),
-            remainingSeconds = 300,
-            isUntimed = false,
-   
+                mate
