@@ -615,4 +615,165 @@ class NaikLevelViewModel(application: Application) :
             _extractionStatus.value = ExtractionStatus.Idle
         }
     }
-}
+
+    fun startExamSimulation(schoolLevel: String, subject: String) {
+        val questions = ExamBank.getQuestionsByFilter(
+            schoolLevel, subject
+        ).shuffled()
+
+        _examSession.value = ExamSessionState(
+            isActive = true,
+            questions = questions,
+            subject = subject,
+            schoolLevel = schoolLevel
+        )
+    }
+
+    fun startCustomExam(config: CustomExamConfig) {
+        when (
+            val result = CustomExamGenerator.generateQuestions(
+                materials = publishedMaterials.value +
+                    draftMaterials.value,
+                sibiBooks = SibiCatalog.books,
+                config = config
+            )
+        ) {
+            is CustomExamGenerator.GenerationResult.Success -> {
+                _examSession.value = ExamSessionState(
+                    isActive = true,
+                    questions = result.questions,
+                    subject = config.examTitle,
+                    schoolLevel = result.questions
+                        .firstOrNull()?.schoolLevel ?: "SMP",
+                    sourceMaterialTitle =
+                        result.sourceTitles.joinToString(", "),
+                    isCustomExam = true,
+                    remainingSeconds = config.timeLimitMinutes * 60,
+                    isUntimed = config.timeLimitMinutes == 0
+                )
+            }
+
+            is CustomExamGenerator.GenerationResult.Error -> {
+                _userNotice.value = result.message
+            }
+        }
+    }
+
+    fun selectExamAnswer(questionId: Int, optionIndex: Int) {
+        val session = _examSession.value
+        if (!session.isActive || session.isSubmitted) return
+
+        val question = session.questions.find { it.id == questionId }
+            ?: return
+        if (optionIndex !in question.options.indices) return
+
+        _examSession.value = session.copy(
+            userAnswers = session.userAnswers + (questionId to optionIndex)
+        )
+    }
+
+    fun nextExamQuestion() {
+        val session = _examSession.value
+        if (session.currentQuestionIndex < session.questions.lastIndex) {
+            _examSession.value = session.copy(
+                currentQuestionIndex = session.currentQuestionIndex + 1
+            )
+        }
+    }
+
+    fun previousExamQuestion() {
+        val session = _examSession.value
+        if (session.currentQuestionIndex > 0) {
+            _examSession.value = session.copy(
+                currentQuestionIndex = session.currentQuestionIndex - 1
+            )
+        }
+    }
+
+    fun submitExamSimulation() {
+        val session = _examSession.value
+        if (!session.isActive || session.isSubmitted) return
+
+        val correct = session.questions.count { question ->
+            session.userAnswers[question.id] == question.correctAnswerIndex
+        }
+
+        _examSession.value = session.copy(
+            isSubmitted = true,
+            correctCount = correct,
+            score = if (session.questions.isNotEmpty()) {
+                correct * 100 / session.questions.size
+            } else 0
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.recordExamAttempt(
+                subject = session.subject,
+                schoolLevel = session.schoolLevel,
+                totalQuestions = session.questions.size,
+                correctAnswers = correct,
+                durationSeconds = (
+                    session.remainingSeconds.coerceAtLeast(0)
+                ),
+                sourceMaterialTitle = session.sourceMaterialTitle,
+                isCustomExam = session.isCustomExam
+            )
+        }
+    }
+
+    fun closeExamSession() {
+        _examSession.value = ExamSessionState()
+    }
+
+    fun sendAiTutorQuestion(
+        query: String,
+        explicitSource: String? = null
+    ) {
+        if (query.isBlank() || _isTutorThinking.value) return
+
+        val userMessage = AiTutorMessage(
+            sender = "user",
+            text = query.trim()
+        )
+        _tutorMessages.value = _tutorMessages.value + userMessage
+        _isTutorThinking.value = true
+
+        viewModelScope.launch {
+            try {
+                val progress = userProgress.value
+                val answer = aiTutorService.answerQuestion(
+                    query = query.trim(),
+                    gradeLevel = progress?.schoolLevel ?: "SMP",
+                    activeSibiBook = _activeSibiBook.value,
+                    activeChapterIndex = _activeSibiChapterIndex.value,
+                    activeReadingMaterial = _activeReadingMaterial.value,
+                    sibiCatalog = if (explicitSource != null) {
+                        SibiCatalog.books.filter {
+                            it.title in explicitSource
+                        }
+                    } else {
+                        SibiCatalog.books
+                    },
+                    savedMaterials = publishedMaterials.value +
+                        draftMaterials.value,
+                    history = _tutorMessages.value.dropLast(1)
+                )
+
+                _tutorMessages.value = _tutorMessages.value + answer
+
+                viewModelScope.launch(Dispatchers.IO) {
+                    repository.onAiTutorQueried()
+                }
+            } catch (e: Exception) {
+                _tutorMessages.value = _tutorMessages.value +
+                    AiTutorMessage(
+                        sender = "ai",
+                        text = "Tutor AI gagal memproses pertanyaan. Coba lagi.",
+                        basis = AnswerBasis.ERROR
+                    )
+            } finally {
+                _isTutorThinking.value = false
+            }
+        }
+    }
+    }
