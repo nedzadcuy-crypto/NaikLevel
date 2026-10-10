@@ -611,6 +611,132 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
             isActive = true,
             questions = questions,
             currentQuestionIndex = 0,
+                        isUntimed = false,
+            isSubmitted = false,
+            score = 0,
+            correctCount = 0,
+            earnedXp = 0,
+            subject = subject,
+            schoolLevel = schoolLevel,
+            sourceMaterialTitle = null,
+            isCustomExam = false
+        )
+    }
+
+    fun startCustomExam(config: CustomExamConfig) {
+        when (
+            val result = CustomExamGenerator.generateQuestions(
+                materials = publishedMaterials.value,
+                sibiBooks = SibiCatalog.books,
+                config = config
+            )
+        ) {
+            is CustomExamGenerator.GenerationResult.Success -> {
+                if (result.questions.isEmpty()) {
+                    _userNotice.value =
+                        "Belum ada soal yang bisa dibuat dari materi pilihan."
+                    return
+                }
+
+                _examSession.value = ExamSessionState(
+                    isActive = true,
+                    questions = result.questions.take(config.questionCount),
+                    currentQuestionIndex = 0,
+                    userAnswers = emptyMap(),
+                    remainingSeconds = config.timeLimitMinutes * 60,
+                    isUntimed = config.timeLimitMinutes == 0,
+                    subject = config.examTitle,
+                    schoolLevel = "Kustom",
+                    sourceMaterialTitle = result.sourceTitles.joinToString(", "),
+                    isCustomExam = true
+                )
+            }
+
+            is CustomExamGenerator.GenerationResult.Error -> {
+                _userNotice.value = result.message
+            }
+        }
+    }
+
+    fun selectExamAnswer(questionId: Int, optionIndex: Int) {
+        val session = _examSession.value
+        if (!session.isActive || session.isSubmitted) return
+
+        val question = session.questions.find { it.id == questionId }
+            ?: return
+
+        if (optionIndex !in question.options.indices) return
+
+        _examSession.value = session.copy(
+            userAnswers = session.userAnswers + (questionId to optionIndex)
+        )
+    }
+
+    fun nextExamQuestion() {
+        val session = _examSession.value
+        if (session.currentQuestionIndex < session.questions.lastIndex) {
+            _examSession.value = session.copy(
+                currentQuestionIndex = session.currentQuestionIndex + 1
+            )
+        }
+    }
+
+    fun previousExamQuestion() {
+        val session = _examSession.value
+        if (session.currentQuestionIndex > 0) {
+            _examSession.value = session.copy(
+                currentQuestionIndex = session.currentQuestionIndex - 1
+            )
+        }
+    }
+
+    fun submitExamSimulation() {
+        val session = _examSession.value
+        if (!session.isActive || session.isSubmitted) return
+
+        val correct = session.questions.count { question ->
+            session.userAnswers[question.id] == question.correctAnswerIndex
+        }
+
+        val score = if (session.questions.isNotEmpty()) {
+            correct * 100 / session.questions.size
+        } else {
+            0
+        }
+
+        val earnedXp = 30 + score / 2
+
+        _examSession.value = session.copy(
+            isSubmitted = true,
+            score = score,
+            correctCount = correct,
+            earnedXp = earnedXp
+        )
+
+        viewModelScope.launch {
+            repository.recordExamAttempt(
+                subject = session.subject,
+                schoolLevel = session.schoolLevel,
+                totalQuestions = session.questions.size,
+                correctAnswers = correct,
+                durationSeconds = if (session.isUntimed) {
+                    0
+                } else {
+                    (300 - session.remainingSeconds).coerceAtLeast(0)
+                },
+                sourceMaterialTitle = session.sourceMaterialTitle,
+                isCustomExam = session.isCustomExam
+            )
+
+            _userNotice.value =
+                "Ujian selesai! Nilai: $score, benar: $correct/${session.questions.size}."
+        }
+    }
+
+    fun closeExamSession() {
+        _examSession.value = ExamSessionState()
+    }
+}
             userAnswers = emptyMap(),
             remainingSeconds = 300,
             isUntimed = false,
