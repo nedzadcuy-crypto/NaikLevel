@@ -1,0 +1,6 @@
+{
+  "name": "NaikLevel",
+  "description": "Belajar Modern - Platform pembelajaran kurikulum SD, SMP, SMA, SMK dengan materi interaktif, gamifikasi XP, quest, dan simulasi ujian.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

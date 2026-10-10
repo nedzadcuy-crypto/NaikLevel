@@ -1,0 +1,1048 @@
+package com.example.data.model
+
+data class SibiChapter(
+    val chapterNumber: Int,
+    val title: String,
+    val summary: String,
+    val content: String,
+    val pageRange: String
+)
+
+data class SibiBook(
+    val id: String,
+    val title: String,
+    val schoolLevel: String, // "SD", "SMP", "SMA", "SMK"
+    val grade: Int,
+    val subject: String,
+    val curriculum: String = "Kurikulum Merdeka",
+    val bookType: String = "Buku Teks Utama (Siswa)",
+    val authors: String,
+    val publisher: String = "Pusat Perbukuan Kemendikdasmen",
+    val year: Int = 2023,
+    val coverColorHex: Long = 0xFF2563EB,
+    val synopsis: String,
+    val officialUrl: String,
+    val pdfDownloadUrl: String = "",
+    val chapters: List<SibiChapter> = emptyList()
+)
+
+object SibiCatalog {
+    val books: List<SibiBook> = listOf(
+        // ==========================================
+        // MATEMATIKA (5 Buku Resmi: SD, SMP, SMA/SMK)
+        // ==========================================
+        SibiBook(
+            id = "sibi_sd_math_1",
+            title = "Belajar Bersama Temanmu Matematika untuk SD Kelas I",
+            schoolLevel = "SD",
+            grade = 1,
+            subject = "Matematika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Tim Gakkosho & Pusat Perbukuan",
+            publisher = "Kementerian Pendidikan Dasar dan Menengah RI",
+            year = 2021,
+            coverColorHex = 0xFF0284C7,
+            synopsis = "Mengenal bilangan sampai 10, menguraikan dan menggabungkan bilangan, bentuk-bentuk bangun datar sederhana, dan konsep penjumlahan dasar.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/belajar-bersama-temanmu-matematika-untuk-sekolah-dasar-kelas-i",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Bilangan sampai dengan 10",
+                    summary = "Membilang banyak benda, mencocokkan jumlah benda dengan lambang bilangan 1 sampai 10.",
+                    content = """
+                        # Bilangan sampai dengan 10 (SIBI Matematika 1 SD)
+                        
+                        ## 1. Membilang Benda
+                        Setiap kumpulan benda memiliki jumlah yang dapat dinyatakan dengan lambang bilangan:
+                        - Lambang 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.
+                        - Benda dapat dihitung berurutan tanpa ada yang terlewat.
+                        
+                        ## 2. Membandingkan Banyak Benda
+                        Gunakan istilah: 'lebih banyak', 'lebih sedikit', atau 'sama banyak'.
+                    """.trimIndent(),
+                    pageRange = "Hal. 6 - 28"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Penguraian dan Penggabungan Bilangan",
+                    summary = "Memahami konsep penguraian bilangan (misal 5 adalah 2 dan 3) sebagai fondasi penjumlahan.",
+                    content = """
+                        # Penguraian dan Penggabungan Bilangan
+                        
+                        ## 1. Penggabungan (Penjumlahan)
+                        Jika 2 buah apel digabungkan dengan 3 buah apel, jumlah seluruhnya menjadi 5 buah apel.
+                        2 + 3 = 5.
+                        
+                        ## 2. Penguraian Bilangan
+                        Bilangan 5 dapat diuraikan menjadi:
+                        - 1 dan 4
+                        - 2 dan 3
+                    """.trimIndent(),
+                    pageRange = "Hal. 31 - 50"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sd_math_4",
+            title = "Belajar Bersama Temanmu: Matematika SD Kelas IV Vol 1",
+            schoolLevel = "SD",
+            grade = 4,
+            subject = "Matematika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Tim Gakkosho & Pusat Perbukuan Kemendikdasmen",
+            publisher = "Kementerian Pendidikan Dasar dan Menengah RI",
+            year = 2023,
+            coverColorHex = 0xFF0284C7,
+            synopsis = "Buku panduan siswa resmi Matematika kelas 4 SD dengan materi bilangan cacah besar, pecahan senilai, pembagian bersusun, dan luas volume.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/belajar-bersama-temanmu-matematika-untuk-sekolah-dasar-kelas-iv-volume-1",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Bilangan Cacah Besar & Nilai Tempat",
+                    summary = "Membaca, menulis, dan menentukan nilai tempat bilangan cacah sampai 100.000.",
+                    content = """
+                        # Bilangan Cacah Besar & Nilai Tempat (SIBI Kelas 4)
+                        
+                        ## 1. Menghitung Jutaan dan Puluhan Ribu
+                        Posisi nilai tempat bilangan:
+                        - Satuan, Puluhan, Ratusan, Ribuan, Puluhan Ribu, Ratusan Ribu.
+                        
+                        Contoh: Pada angka 47.250:
+                        - 4 bernilai 40.000 (puluhan ribu)
+                        - 7 bernilai 7.000 (ribuan)
+                        - 2 bernilai 200 (ratusan)
+                        - 5 bernilai 50 (puluhan)
+                        - 0 bernilai 0 (satuan)
+                    """.trimIndent(),
+                    pageRange = "Hal. 4 - 18"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Pecahan Senilai dan Operasi Hitung",
+                    summary = "Mengenal pecahan senilai, menyederhanakan pecahan, dan penjumlahan berpenyebut sama.",
+                    content = """
+                        # Pecahan Senilai dan Operasi Hitung (SIBI Kelas 4)
+                        
+                        ## 1. Pecahan Senilai
+                        Dua pecahan bernilai sama jika dikali atau dibagi bilangan yang sama.
+                        Contoh: 1/2 = 2/4 = 3/6 = 4/8.
+                        
+                        ## 2. Penjumlahan Berpenyebut Sama
+                        a/c + b/c = (a + b) / c.
+                        Hanya jumlahkan pembilangnya! Penyebut tetap sama.
+                    """.trimIndent(),
+                    pageRange = "Hal. 24 - 42"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_math_7",
+            title = "Matematika untuk SMP/MTs Kelas VII",
+            schoolLevel = "SMP",
+            grade = 7,
+            subject = "Matematika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Hobri, Mohammad Tohir, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF4F46E5,
+            synopsis = "Bilangan bulat, bilangan rasional, bentuk aljabar, persamaan dan pertidaksamaan linear satu variabel, kesebangunan dan bangun datar.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/matematika-untuk-smp-kelas-vii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Bilangan Bulat dan Bilangan Rasional",
+                    summary = "Operasi hitung campuran bilangan bulat positif dan negatif, garis bilangan, serta sifat komutatif dan distributif.",
+                    content = """
+                        # Bilangan Bulat dan Rasional (SIBI Matematika 7)
+                        
+                        ## 1. Operasi Bilangan Bulat
+                        - Penjumlahan & Pengurangan: Perhatikan tanda positif dan negatif pada garis bilangan.
+                        - Perkalian:
+                          (+) × (+) = (+)
+                          (-) × (-) = (+)
+                          (+) × (-) = (-)
+                        
+                        ## 2. Sifat Operasi Hitung
+                        - Komutatif: a + b = b + a
+                        - Asosiatif: (a + b) + c = a + (b + c)
+                        - Distributif: a × (b + c) = (a × b) + (a × c)
+                    """.trimIndent(),
+                    pageRange = "Hal. 10 - 45"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Bentuk Aljabar & Persamaan Linear",
+                    summary = "Mengenal variabel, koefisien, konstanta, dan penyelesaian PLSV (Persamaan Linear Satu Variabel).",
+                    content = """
+                        # Bentuk Aljabar & PLSV (SIBI Matematika 7)
+                        
+                        ## 1. Unsur Bentuk Aljabar
+                        Pada 3x + 5:
+                        - 3 adalah koefisien
+                        - x adalah variabel
+                        - 5 adalah konstanta
+                        
+                        ## 2. Persamaan Linear Satu Variabel (PLSV)
+                        Bentuk: ax + b = c.
+                        Contoh: 2x + 4 = 10 -> 2x = 6 -> x = 3.
+                    """.trimIndent(),
+                    pageRange = "Hal. 52 - 86"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_math_8",
+            title = "Matematika SMP/MTs Kelas VIII",
+            schoolLevel = "SMP",
+            grade = 8,
+            subject = "Matematika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Tim Kemendikdasmen",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2023,
+            coverColorHex = 0xFF4F46E5,
+            synopsis = "Pola bilangan, bidang kartesius, relasi & fungsi, persamaan garis lurus, teorema pythagoras, dan statistika dasar.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/matematika-smp-kelas-viii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Teorema Pythagoras dan Penerapan Nyata",
+                    summary = "Pembuktian aljabar dan geometris rumus Pythagoras, tripel Pythagoras, serta aplikasi pada bangun ruang.",
+                    content = """
+                        # Teorema Pythagoras (SIBI Matematika 8)
+                        
+                        ## 1. Rumus Utama
+                        Untuk segitiga siku-siku dengan sisi penyiku a dan b, serta sisi miring c:
+                        c² = a² + b²
+                        
+                        ## 2. Tripel Pythagoras Populer
+                        - 3, 4, 5
+                        - 5, 12, 13
+                        - 7, 24, 25
+                        - 8, 15, 17
+                        
+                        ## 3. Jenis Segitiga Berdasarkan Sisi
+                        Jika c adalah sisi terpanjang:
+                        - c² = a² + b² -> Segitiga siku-siku
+                        - c² < a² + b² -> Segitiga lancip
+                        - c² > a² + b² -> Segitiga tumpul
+                    """.trimIndent(),
+                    pageRange = "Hal. 55 - 80"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_math_10",
+            title = "Matematika untuk SMA/SMK Kelas X",
+            schoolLevel = "SMA",
+            grade = 10,
+            subject = "Matematika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Dicki Susanto, Theja Kurniawan, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF1D4ED8,
+            synopsis = "Eksponen dan logaritma, barisan dan deret aritmetika geometri, vektor pada ruang dimensi dua dan tiga, serta trigonometri dasar.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/matematika-untuk-sma-smk-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Eksponen dan Logaritma",
+                    summary = "Sifat bilangan berpangkat rasional, persamaan eksponensial sederhana, dan operasi logaritma.",
+                    content = """
+                        # Eksponen dan Logaritma (SIBI Matematika 10)
+                        
+                        ## 1. Sifat Eksponen
+                        - a^m × a^n = a^(m+n)
+                        - a^m / a^n = a^(m-n)
+                        - (a^m)^n = a^(m×n)
+                        - a^0 = 1 (untuk a ≠ 0)
+                        - a^(-n) = 1 / (a^n)
+                        
+                        ## 2. Logaritma
+                        Jika a^c = b, maka ^a log b = c (dengan a > 0, a ≠ 1, b > 0).
+                        - ^a log (b × c) = ^a log b + ^a log c
+                        - ^a log (b / c) = ^a log b - ^a log c
+                    """.trimIndent(),
+                    pageRange = "Hal. 6 - 32"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Barisan dan Deret Aritmetika serta Geometri",
+                    summary = "Mencari suku ke-n (Un) dan jumlah n suku pertama (Sn) pada pola barisan aritmetika dan geometri.",
+                    content = """
+                        # Barisan dan Deret (SIBI Matematika 10)
+                        
+                        ## 1. Barisan Aritmetika
+                        Memiliki selisih tetap (beda, b):
+                        - Un = a + (n - 1) · b
+                        - Sn = n/2 · (2a + (n - 1) · b)
+                        
+                        ## 2. Barisan Geometri
+                        Memiliki perbandingan tetap (rasio, r):
+                        - Un = a · r^(n - 1)
+                        - Sn = a(r^n - 1) / (r - 1)  (jika r > 1)
+                    """.trimIndent(),
+                    pageRange = "Hal. 35 - 64"
+                )
+            )
+        ),
+
+        // ========================================================
+        // IPA / IPAS / FISIKA (6 Buku Resmi: SD, SMP, SMA)
+        // ========================================================
+        SibiBook(
+            id = "sibi_sd_ipas_4",
+            title = "Ilmu Pengetahuan Alam dan Sosial (IPAS) SD Kelas IV",
+            schoolLevel = "SD",
+            grade = 4,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Amalia Fitri, dkk.",
+            publisher = "Kementerian Pendidikan Dasar dan Menengah RI",
+            year = 2023,
+            coverColorHex = 0xFF16A34A,
+            synopsis = "Eksplorasi tumbuhan sumber kehidupan, wujud zat dan perubahannya, gaya di sekitar kita, serta keanekaragaman kearifan lokal.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/ilmu-pengetahuan-alam-dan-sosial-untuk-sd-kelas-iv",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Tumbuhan, Sumber Kehidupan di Bumi",
+                    summary = "Bagian-bagian tubuh tumbuhan, fungsi akar batang daun, dan proses fotosintesis.",
+                    content = """
+                        # Tumbuhan, Sumber Kehidupan di Bumi (SIBI IPAS 4)
+                        
+                        ## 1. Bagian Tubuh Tumbuhan
+                        - Akar: Menyerap air dan zat hara dari tanah serta memperkokoh tumbuhan.
+                        - Batang: Menyalurkan air, mineral, dan makanan ke seluruh bagian tumbuhan.
+                        - Daun: Tempat fotosintesis karena mengandung klorofil (zat hijau daun).
+                        - Bunga: Alat perkembangbiakan tumbuhan secara generatif.
+                        - Buah & Biji: Menyimpan cadangan makanan dan pelindung embrio calon tanaman.
+                        
+                        ## 2. Fotosintesis
+                        Air + Karbondioksida + Cahaya Matahari -> Glukosa + Oksigen.
+                    """.trimIndent(),
+                    pageRange = "Hal. 1 - 22"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Wujud Zat dan Perubahannya",
+                    summary = "Mengenal sifat zat padat, cair, dan gas serta proses mencair, membeku, menguap, dan mengembun.",
+                    content = """
+                        # Wujud Zat dan Perubahannya (SIBI IPAS 4)
+                        
+                        ## 1. Tiga Wujud Zat
+                        - Padat: Bentuk dan volume tetap.
+                        - Cair: Bentuk mengikuti wadah, volume tetap.
+                        - Gas: Bentuk dan volume berubah mengisi seluruh ruangan.
+                        
+                        ## 2. Perubahan Wujud Zat
+                        - Mencair: Padat ke Cair (memerlukan kalor)
+                        - Membeku: Cair ke Padat (melepaskan kalor)
+                        - Menguap: Cair ke Gas (memerlukan kalor)
+                        - Mengembun: Gas ke Cair (melepaskan kalor)
+                    """.trimIndent(),
+                    pageRange = "Hal. 29 - 58"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sd_ipas_5",
+            title = "Ilmu Pengetahuan Alam dan Sosial (IPAS) untuk SD Kelas V",
+            schoolLevel = "SD",
+            grade = 5,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Amalia Fitri, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF16A34A,
+            synopsis = "Sifat cahaya dan penglihatan, bunyi dan pendengaran, rantai makanan ekosistem, serta magnet dan listrik dalam kehidupan.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/ilmu-pengetahuan-alam-dan-sosial-untuk-sd-kelas-v",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Melihat karena Cahaya, Mendengar karena Bunyi",
+                    summary = "Sifat cahaya (merambat lurus, menembus benda bening, dipantulkan, dibiaskan) dan perambatan gelombang bunyi.",
+                    content = """
+                        # Cahaya dan Bunyi (SIBI IPAS 5)
+                        
+                        ## 1. Sifat-Sifat Cahaya
+                        1. Merambat lurus dalam medium homogen.
+                        2. Menembus benda bening (kaca, air jernih).
+                        3. Dapat dipantulkan (hukum pemantulan cahaya).
+                        4. Dapat dibiaskan (pembelokan saat melewati medium berbeda kerapatan).
+                        
+                        ## 2. Sifat Gelombang Bunyi
+                        - Bunyi merambat melalui zat padat, cair, dan gas.
+                        - Bunyi tidak dapat merambat di ruang hampa udara.
+                    """.trimIndent(),
+                    pageRange = "Hal. 2 - 34"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Harmoni dalam Ekosistem & Rantai Makanan",
+                    summary = "Peran produsen, konsumen tingkat I, II, III, dan dekomposer dalam jaring-jaring makanan.",
+                    content = """
+                        # Harmoni dalam Ekosistem (SIBI IPAS 5)
+                        
+                        ## 1. Rantai Makanan
+                        - Produsen: Tumbuhan hijau yang menghasilkan makanan sendiri melalui fotosintesis.
+                        - Konsumen I: Herbivora pemakan produsen (misal ulat, belalang).
+                        - Konsumen II: Karnivora pemakan konsumen I (misal katak, ayam).
+                        - Pengurai (Dekomposer): Jamur dan bakteri yang menguraikan bangkai menjadi zat hara tanah.
+                    """.trimIndent(),
+                    pageRange = "Hal. 42 - 76"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_ipa_7",
+            title = "Ilmu Pengetahuan Alam SMP Kelas VII",
+            schoolLevel = "SMP",
+            grade = 7,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Victoriani Inabuy, Cece Sutia, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2023,
+            coverColorHex = 0xFF0D9488,
+            synopsis = "Hakikat sains dan metode ilmiah, pengukuran besaran SI, zat dan wujudnya, suhu kalor pemuaian, dan ekologi keanekaragaman hayati.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/ilmu-pengetahuan-alam-untuk-smp-kelas-vii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Hakikat Sains dan Metode Ilmiah",
+                    summary = "Langkah-langkah penyelidikan ilmiah, pengukuran besaran pokok SI, dan keselamatan kerja laboratorium.",
+                    content = """
+                        # Hakikat Sains dan Metode Ilmiah (SIBI IPA 7)
+                        
+                        ## 1. Tahapan Metode Ilmiah
+                        1. Observasi (Pengamatan lingkungan)
+                        2. Merumuskan Masalah
+                        3. Studi Pustaka / Mengumpulkan Informasi
+                        4. Merumuskan Hipotesis (Dugaan sementara)
+                        5. Merancang & Melaksanakan Eksperimen
+                        6. Menganalisis Data
+                        7. Menarik Kesimpulan
+                        
+                        ## 2. Besaran Pokok SI
+                        - Panjang (meter)
+                        - Massa (kilogram)
+                        - Waktu (sekon)
+                        - Suhu (Kelvin)
+                        - Kuat Arus Listrik (Ampere)
+                        - Intensitas Cahaya (Candela)
+                        - Jumlah Zat (mol)
+                    """.trimIndent(),
+                    pageRange = "Hal. 5 - 28"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Suhu, Kalor, dan Pemuaian",
+                    summary = "Konversi skala termometer (Celcius, Reamur, Fahrenheit, Kelvin), kalor jenis, dan perpindahan kalor konduksi konveksi radiasi.",
+                    content = """
+                        # Suhu, Kalor, dan Pemuaian (SIBI IPA 7)
+                        
+                        ## 1. Kalor dan Perubahan Suhu
+                        Rumus: Q = m · c · ΔT
+                        - Q: Kalor (Joule)
+                        - m: Massa benda (kg)
+                        - c: Kalor jenis benda (J/kg°C)
+                        - ΔT: Perubahan suhu (°C)
+                        
+                        ## 2. Cara Perpindahan Kalor
+                        - Konduksi: Merambat melalui zat perantara tanpa perpindahan partikel (pada zat padat/logam).
+                        - Konveksi: Merambat disertai perpindahan partikel zat (pada zat cair dan gas).
+                        - Radiasi: Merambat melalui pancaran gelombang elektromagnetik tanpa medium perantara.
+                    """.trimIndent(),
+                    pageRange = "Hal. 85 - 114"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_ipa_8",
+            title = "Ilmu Pengetahuan Alam untuk SMP Kelas VIII",
+            schoolLevel = "SMP",
+            grade = 8,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Sri Handayani Lestari, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF0D9488,
+            synopsis = "Pengenalan sel, sistem organ pencernaan pernapasan ekskresi, usaha dan energi pesawat sederhana, serta struktur lapisan bumi.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/ilmu-pengetahuan-alam-untuk-smp-kelas-viii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Pengenalan Sel & Mikroskop",
+                    summary = "Teori sel, perbedaan sel tumbuhan dan sel hewan, fungsi membran inti kloroplas dinding sel.",
+                    content = """
+                        # Pengenalan Sel (SIBI IPA 8)
+                        
+                        ## 1. Struktur Sel
+                        Sel adalah unit struktural dan fungsional terkecil penyusun makhluk hidup.
+                        
+                        ## 2. Perbedaan Sel Tumbuhan dan Sel Hewan
+                        - Sel Tumbuhan: Memiliki dinding sel dan kloroplas (vakuola berukuran besar).
+                        - Sel Hewan: Tidak memiliki dinding sel dan kloroplas (memiliki sentriol).
+                    """.trimIndent(),
+                    pageRange = "Hal. 4 - 32"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_ipa_10",
+            title = "Ilmu Pengetahuan Alam untuk SMA Kelas X",
+            schoolLevel = "SMA",
+            grade = 10,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Ayuk Ratna Puspaningsih, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF2563EB,
+            synopsis = "Pengukuran dalam kerja ilmiah, virus dan peranannya dalam biologi, kimia hijau dalam pembangunan berkelanjutan, serta hukum dasar kimia.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/ilmu-pengetahuan-alam-untuk-sma-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Pengukuran dalam Kerja Ilmiah & Angka Penting",
+                    summary = "Jangka sorong, mikrometer sekrup, ketidakpastian pengukuran, dan aturan penulisan angka penting.",
+                    content = """
+                        # Pengukuran dan Angka Penting (SIBI IPA 10)
+                        
+                        ## 1. Alat Ukur Panjang Presisi
+                        - Jangka Sorong: Ketelitian 0,01 cm (0,1 mm).
+                        - Mikrometer Sekrup: Ketelitian 0,01 mm.
+                        
+                        ## 2. Aturan Angka Penting
+                        - Semua angka bukan nol adalah angka penting.
+                        - Angka nol di antara angka bukan nol adalah angka penting.
+                        - Angka nol di sebelah kiri angka bukan nol pertama bukan angka penting.
+                    """.trimIndent(),
+                    pageRange = "Hal. 4 - 26"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_fisika_11",
+            title = "Fisika untuk SMA/MA Kelas XI",
+            schoolLevel = "SMA",
+            grade = 11,
+            subject = "IPA",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Marianna Magdalena Radjawane, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2023,
+            coverColorHex = 0xFF2563EB,
+            synopsis = "Vektor gerak lurus dan parabola, dinamika hukum newton, usaha energi, fluida statis dinamis, dan termodinamika.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/fisika-untuk-sma-kelas-xi",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Vektor Posisi, Kecepatan, dan Percepatan Gerak",
+                    summary = "Operasi vektor, gerak lurus berubah beraturan (GLBB), dan gerak parabola dua dimensi.",
+                    content = """
+                        # Kinematika Gerak (SIBI Fisika 11)
+                        
+                        ## 1. Gerak Lurus Berubah Beraturan (GLBB)
+                        - vt = v0 + a·t
+                        - s = v0·t + 1/2·a·t²
+                        - vt² = v0² + 2·a·s
+                        
+                        ## 2. Gerak Parabola
+                        - Sumbu X: Gerak Lurus Beraturan (GLB), vx = v0·cos(θ) = konstan.
+                        - Sumbu Y: Gerak Lurus Berubah Beraturan (GLBB), dipengaruhi percepatan gravitasi g, vy = v0·sin(θ) - g·t.
+                    """.trimIndent(),
+                    pageRange = "Hal. 12 - 40"
+                )
+            )
+        ),
+
+        // ========================================================
+        // BAHASA INDONESIA (5 Buku Resmi: SD, SMP, SMA/SMK)
+        // ========================================================
+        SibiBook(
+            id = "sibi_sd_indo_1",
+            title = "Bahasa Indonesia: Aku Bisa! untuk SD Kelas I",
+            schoolLevel = "SD",
+            grade = 1,
+            subject = "Bahasa Indonesia",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Sofie Dewayani",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFFDC2626,
+            synopsis = "Mengenal bunyi dan huruf alfabet, merangkai suku kata, menyimak dongeng fabel, serta menyapa dan memperkenalkan diri santun.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-aku-bisa-untuk-sd-kelas-i",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Bunyi Apa? Mengenal Huruf dan Suku Kata",
+                    summary = "Mengenal bunyi hewan dan alam, membedakan huruf vokal (a, i, u, e, o) dan konsonan.",
+                    content = """
+                        # Bunyi dan Huruf (SIBI Bahasa Indonesia 1)
+                        
+                        ## 1. Huruf Vokal dan Konsonan
+                        - Huruf vokal: a, i, u, e, o.
+                        - Membaca suku kata pola KV (Konsonan-Vokal): ba, ca, da, fa, ga.
+                        
+                        ## 2. Berbicara Santun
+                        Gunakan kata tolong saat meminta bantuan, dan terima kasih saat menerima bantuan.
+                    """.trimIndent(),
+                    pageRange = "Hal. 4 - 24"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sd_indo_4",
+            title = "Bahasa Indonesia: Lihat Sekitar untuk SD Kelas IV",
+            schoolLevel = "SD",
+            grade = 4,
+            subject = "Bahasa Indonesia",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Eva Yulia Nukman & Cicilia Erni Setyowati",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFFDC2626,
+            synopsis = "Kalimat transitif dan intransitif, cerita fabel dan dongeng nusantara, wawancara sederhana, serta menulis paragraf deskriptif.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-lihat-sekitar-untuk-sd-kelas-iv",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Sudah Besar: Kalimat Transitif dan Intransitif",
+                    summary = "Membedakan kalimat yang memerlukan objek (transitif) dan kalimat tanpa objek (intransitif).",
+                    content = """
+                        # Kalimat Transitif dan Intransitif (SIBI B. Indo 4)
+                        
+                        ## 1. Kalimat Transitif
+                        Kalimat yang membutuhkan objek (O) agar maknanya utuh.
+                        Pola: S - P - O.
+                        Contoh: Rani (S) membaca (P) buku cerita (O).
+                        
+                        ## 2. Kalimat Intransitif
+                        Kalimat yang tidak memerlukan objek.
+                        Pola: S - P atau S - P - K.
+                        Contoh: Adik (S) menangis (P). Burung (S) terbang (P) di udara (K).
+                    """.trimIndent(),
+                    pageRange = "Hal. 2 - 22"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_indo_7",
+            title = "Bahasa Indonesia untuk SMP Kelas VII",
+            schoolLevel = "SMP",
+            grade = 7,
+            subject = "Bahasa Indonesia",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Rakhma Subarna, Sofie Dewayani, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFFB91C1C,
+            synopsis = "Teks deskripsi menjelajah nusantara, teks puisi rakyat dan pantun, teks prosedur, serta teks berita faktual.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-untuk-smp-kelas-vii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Jelajah Nusantara: Mengidentifikasi Teks Deskripsi",
+                    summary = "Ciri objek, tujuan, panca indra, dan struktur teks deskripsi (identifikasi, deskripsi bagian, simpulan).",
+                    content = """
+                        # Teks Deskripsi (SIBI Bahasa Indonesia 7)
+                        
+                        ## 1. Ciri Utama Teks Deskripsi
+                        - Menggambarkan objek secara rinci dan konkret sehingga pembaca seolah melihat, mendengar, atau merasakan sendiri.
+                        - Menggunakan kata-kata panca indra (visual, auditori, taktil).
+                        
+                        ## 2. Struktur Teks Deskripsi
+                        1. Identifikasi / Gambaran Umum: Menjelaskan nama objek dan lokasinya.
+                        2. Deskripsi Bagian: Memerinci fisik dan bagian-bagian objek.
+                        3. Simpulan / Kesan: Tanggapan atau perasaan penulis terhadap objek.
+                    """.trimIndent(),
+                    pageRange = "Hal. 3 - 30"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_indo_8",
+            title = "Bahasa Indonesia untuk SMP Kelas VIII",
+            schoolLevel = "SMP",
+            grade = 8,
+            subject = "Bahasa Indonesia",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Maya Lestari Gusfitri & Elly Delfia",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFFB91C1C,
+            synopsis = "Teks laporan hasil observasi, iklan slogan poster, teks artikel ilmiah populer, karya fiksi cerpen, dan teks ulasan.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/bahasa-indonesia-untuk-smp-kelas-viii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Menulis Teks Laporan Hasil Observasi",
+                    summary = "Mengamati fenomena alam, mengumpulkan data fakta objektif, dan menyusun teks LHO sistematis.",
+                    content = """
+                        # Teks Laporan Hasil Observasi (SIBI Bahasa Indonesia 8)
+                        
+                        ## 1. Karakteristik Teks LHO
+                        - Bersifat objektif, global, dan universal.
+                        - Berdasarkan fakta pengamatan lapangan tanpa opini subjektif.
+                        - Menggunakan istilah teknis dan kalimat definisi.
+                        
+                        ## 2. Kaidah Kebahasaan
+                        - Verba relasional (adalah, merupakan, yaitu).
+                        - Kalimat klasifikasi (dikelompokkan menjadi, terbagi atas).
+                    """.trimIndent(),
+                    pageRange = "Hal. 4 - 34"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_indo_10",
+            title = "Cerdas Cergas Berbahasa Indonesia SMA/SMK Kelas X",
+            schoolLevel = "SMA",
+            grade = 10,
+            subject = "Bahasa Indonesia",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Fadillah Tri Aulia & Sefi Indra Gumilar",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2023,
+            coverColorHex = 0xFFE11D48,
+            synopsis = "Teks laporan hasil observasi, teks anekdot, hikayat sastra Melayu klasik, negosiasi bisnis, biografi tokoh, dan apresiasi puisi.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/cerdas-cergas-berbahasa-dan-bersastra-indonesia-untuk-sma-smk-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Mengungkap Fakta Alam Melalui Teks LHO",
+                    summary = "Ciri-ciri teks laporan hasil observasi, struktur pernyataan umum, deskripsi bagian, dan deskripsi manfaat.",
+                    content = """
+                        # Teks Laporan Hasil Observasi (SIBI Bahasa Indonesia 10)
+                        
+                        ## 1. Ciri Utama Teks LHO
+                        - Bersifat objektif dan tidak memihak.
+                        - Berdasarkan fakta hasil pengamatan langsung.
+                        - Menggunakan istilah ilmiah baku.
+                        
+                        ## 2. Struktur Teks LHO
+                        1. Pernyataan Umum / Klasifikasi: Definisi umum tentang objek yang diamati.
+                        2. Deskripsi Bagian: Rincian ciri fisik, bagian-bagian objek, dan cara hidup.
+                        3. Deskripsi Manfaat / Simpulan: Nilai guna dan fungsi objek dalam kehidupan manusia.
+                    """.trimIndent(),
+                    pageRange = "Hal. 7 - 30"
+                ),
+                SibiChapter(
+                    chapterNumber = 2,
+                    title = "Menyampaikan Kritik Melalui Teks Anekdot",
+                    summary = "Menganalisis teks anekdot sebagai kritik sosial yang dibalut humor cerdas dan bernas.",
+                    content = """
+                        # Teks Anekdot (SIBI Bahasa Indonesia 10)
+                        
+                        ## 1. Fungsi Anekdot
+                        Teks cerita rekaan lucu yang mengandung sindiran atau kritik sosial terhadap fenomena publik atau tokoh tertentu.
+                        
+                        ## 2. Struktur Teks Anekdot
+                        - Abstraksi: Pengantar situasi cerita.
+                        - Orientasi: Awal mula peristiwa terjadi.
+                        - Krisis: Bagian puncak humor atau konflik ganjil.
+                        - Reaksi: Tindakan penyelesaian dari krisis.
+                        - Koda: Penutup atau kesimpulan akhir cerita.
+                    """.trimIndent(),
+                    pageRange = "Hal. 35 - 58"
+                )
+            )
+        ),
+
+        // ========================================================
+        // INFORMATIKA (5 Buku Resmi: SMP, SMA, SMK)
+        // ========================================================
+        SibiBook(
+            id = "sibi_smp_infor_7",
+            title = "Informatika untuk SMP Kelas VII",
+            schoolLevel = "SMP",
+            grade = 7,
+            subject = "Informatika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Maresha Caroline Wijanto, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF7C3AED,
+            synopsis = "Berpikir komputasional pola algoritma, teknologi informasi komunikasi, sistem komputer hardware software, dan analisis data.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/informatika-untuk-smp-kelas-vii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Berpikir Komputasional dan Logika Pola",
+                    summary = "Pengenalan algoritma langkah terstruktur, optimasi penjadwalan, dan representasi data bilangan biner.",
+                    content = """
+                        # Berpikir Komputasional (SIBI Informatika 7)
+                        
+                        ## 1. Konsep Algoritma Sederhana
+                        Algoritma adalah urutan langkah logis yang disusun secara sistematis untuk menyelesaikan suatu masalah.
+                        
+                        ## 2. Bilangan Biner
+                        Komputer memproses data menggunakan sistem bilangan biner (basis 2) yang hanya terdiri dari angka 0 dan 1.
+                    """.trimIndent(),
+                    pageRange = "Hal. 27 - 54"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smp_infor_8",
+            title = "Informatika untuk SMP Kelas VIII",
+            schoolLevel = "SMP",
+            grade = 8,
+            subject = "Informatika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Vania Natali, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF7C3AED,
+            synopsis = "Struktur data graf pohon, jaringan komputer lokal internet, analisis data spreadsheet, dan pemrograman visual blok.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/informatika-untuk-smp-kelas-viii",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Struktur Data Pohon dan Graf",
+                    summary = "Mengenal pohon hierarki (tree) dan simpul jaringan (graph) dalam pemodelan data komputer.",
+                    content = """
+                        # Struktur Data Pohon dan Graf (SIBI Informatika 8)
+                        
+                        ## 1. Struktur Data Tree
+                        - Terdiri atas Root (akar), Node (simpul), dan Leaf (daun).
+                        - Menggambarkan hubungan hierarki satu arah (induk-anak).
+                        
+                        ## 2. Struktur Data Graph
+                        - Terdiri atas Vertex (simpul) dan Edge (sisi penghubung).
+                        - Digunakan untuk memodelkan jaringan pertemanan atau rute jalan.
+                    """.trimIndent(),
+                    pageRange = "Hal. 6 - 36"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_infor_10",
+            title = "Informatika untuk SMA Kelas X",
+            schoolLevel = "SMA",
+            grade = 10,
+            subject = "Informatika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Musthofa, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF7C3AED,
+            synopsis = "Berpikir komputasional pencarian pengurutan, integrasi aplikasi perkantoran, jaringan komputer, dan pemrograman bahasa C/Python.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/informatika-untuk-sma-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Berpikir Komputasional: Searching & Sorting",
+                    summary = "Algoritma pencarian linear binary search, dan algoritma pengurutan bubble sort insertion sort.",
+                    content = """
+                        # Searching & Sorting (SIBI Informatika 10)
+                        
+                        ## 1. Algoritma Pencarian
+                        - Linear Search: Memeriksa data satu demi satu dari awal hingga akhir.
+                        - Binary Search: Mencari data pada array yang sudah terurut dengan membagi data menjadi dua bagian.
+                        
+                        ## 2. Algoritma Pengurutan
+                        - Bubble Sort: Membandingkan dua elemen berdampingan dan menukarnya jika urutannya salah.
+                        - Insertion Sort: Menyisipkan elemen pada posisi yang tepat seperti menyusun kartu bermain.
+                    """.trimIndent(),
+                    pageRange = "Hal. 18 - 48"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smk_infor_10",
+            title = "Informatika untuk SMK/MAK Kelas X",
+            schoolLevel = "SMK",
+            grade = 10,
+            subject = "Informatika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Pusat Perbukuan Kemendikdasmen",
+            publisher = "Kementerian Pendidikan Dasar dan Menengah RI",
+            year = 2023,
+            coverColorHex = 0xFF7C3AED,
+            synopsis = "Berpikir komputasional industri, teknologi informasi komunikasi, sistem komputer, jaringan internet, dan algoritma pemrograman kejuruan.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/informatika-untuk-smk-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Berpikir Komputasional & Dekomposisi Masalah",
+                    summary = "Empat pilar computational thinking: dekomposisi, pengenalan pola, abstraksi, dan perancangan algoritma.",
+                    content = """
+                        # Berpikir Komputasional (SIBI Informatika SMK 10)
+                        
+                        ## 1. Empat Pilar Berpikir Komputasional
+                        1. Dekomposisi: Memecah persoalan rumit menjadi sub-persoalan yang lebih kecil dan mudah dikelola.
+                        2. Pengenalan Pola: Mengamati kesamaan atau tren dalam data untuk menemukan solusi umum.
+                        3. Abstraksi: Fokus pada informasi esensial dan mengabaikan detail yang tidak relevan.
+                        4. Algoritma: Merumuskan instruksi langkah demi langkah secara berurutan dan logis.
+                        
+                        ## 2. Representasi Algoritma
+                        - Pseudocode: Notasi teks menyerupai kode program.
+                        - Flowchart: Diagram simbol geometris yang menggambarkan alur proses data.
+                    """.trimIndent(),
+                    pageRange = "Hal. 15 - 38"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_sma_infor_11",
+            title = "Informatika untuk SMA Kelas XI",
+            schoolLevel = "SMA",
+            grade = 11,
+            subject = "Informatika",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Paulina Heruningsih Prima Rosa, dkk.",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2021,
+            coverColorHex = 0xFF6D28D9,
+            synopsis = "Strategi algoritmik greedy dynamic programming, arsitektur komputer jaringan nirkabel, rekayasa perangkat lunak, dan etika privasi data.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/informatika-untuk-sma-kelas-xi",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Strategi Algoritmik: Greedy & Dynamic Programming",
+                    summary = "Memecahkan masalah optimasi dengan pendekatan algoritma Greedy dan Pemrograman Dinamis.",
+                    content = """
+                        # Strategi Algoritmik (SIBI Informatika 11)
+                        
+                        ## 1. Algoritma Greedy
+                        Mengambil keputusan terbaik pada setiap langkah lokal dengan harapan mencapai solusi optimal global.
+                        Contoh: Masalah penukaran pecahan koin dengan jumlah koin paling sedikit.
+                        
+                        ## 2. Dynamic Programming
+                        Memecah masalah menjadi sub-masalah tumpang tindih dan menyimpan hasil perhitungan sebelumnya (memoization) agar tidak dihitung berulang.
+                    """.trimIndent(),
+                    pageRange = "Hal. 10 - 46"
+                )
+            )
+        ),
+
+        // ========================================================
+        // KEJURUAN SMK (2 Buku Dasar Program Keahlian Resmi SIBI)
+        // ========================================================
+        SibiBook(
+            id = "sibi_smk_tkj_10",
+            title = "Dasar-Dasar Teknik Jaringan Komputer dan Telekomunikasi SMK Kelas X",
+            schoolLevel = "SMK",
+            grade = 10,
+            subject = "Kejuruan SMK",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Supriyanto & Pusat Perbukuan Kemendikdasmen",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2023,
+            coverColorHex = 0xFFD97706,
+            synopsis = "Proses bisnis industri TJKT, perkembangan 5G IoT, K3LH, media transmisi kabel UTP dan fiber optic, serta pengalamatan IPv4.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/dasar-dasar-teknik-jaringan-komputer-dan-telekomunikasi-smk-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Konsep Dasar Jaringan & Media Transmisi",
+                    summary = "Topologi jaringan lokal (LAN), media kabel UTP (Cat5e/Cat6), fiber optic, dan pengkabelan Straight/Cross.",
+                    content = """
+                        # Dasar Jaringan & Media Transmisi (SIBI SMK TJKT 10)
+                        
+                        ## 1. Standar Urutan Kabel UTP (T568B)
+                        Urutan pin 1 sampai 8:
+                        1. Putih-Oranye
+                        2. Oranye
+                        3. Putih-Hijau
+                        4. Biru
+                        5. Putih-Biru
+                        6. Hijau
+                        7. Putih-Cokelat
+                        8. Cokelat
+                        
+                        ## 2. Jenis Konfigurasi Kabel
+                        - Straight-Through: Menghubungkan perangkat berbeda (PC ke Switch, Router ke Switch).
+                        - Crossover: Menghubungkan perangkat sejenis (PC ke PC, Switch ke Switch).
+                    """.trimIndent(),
+                    pageRange = "Hal. 45 - 72"
+                )
+            )
+        ),
+        SibiBook(
+            id = "sibi_smk_pplg_10",
+            title = "Dasar-Dasar Pengembangan Perangkat Lunak dan Gim SMK Kelas X",
+            schoolLevel = "SMK",
+            grade = 10,
+            subject = "Kejuruan SMK",
+            curriculum = "Kurikulum Merdeka",
+            authors = "Wiyana & Pusat Perbukuan Kemendikdasmen",
+            publisher = "Pusat Perbukuan Kemendikdasmen RI",
+            year = 2022,
+            coverColorHex = 0xFFB45309,
+            synopsis = "Proses bisnis industri software & game, metodologi pengembangan Agile Scrum, logika algoritma, dan pemrograman berorientasi objek.",
+            officialUrl = "https://buku.kemendikdasmen.go.id/katalog/dasar-dasar-pengembangan-perangkat-lunak-dan-gim-smk-kelas-x",
+            chapters = listOf(
+                SibiChapter(
+                    chapterNumber = 1,
+                    title = "Pemrograman Berorientasi Objek & Logika Algoritma",
+                    summary = "Konsep dasar kelas, objek, atribut, metode, dan tahapan Software Development Life Cycle (SDLC).",
+                    content = """
+                        # Dasar PPLG & OOP (SIBI SMK Kelas 10)
+                        
+                        ## 1. Konsep Dasar PBO (OOP)
+                        - Kelas (Class): Cetak biru atau template untuk menciptakan objek.
+                        - Objek (Object): Instansiasi nyata dari sebuah kelas.
+                        - Atribut: Variabel data yang dimiliki objek.
+                        - Metode: Perilaku atau fungsi yang dapat dijalankan oleh objek.
+                        
+                        ## 2. Tahapan SDLC
+                        1. Analisis Kebutuhan (Requirements)
+                        2. Perancangan Sistem (Design)
+                        3. Implementasi Kode (Coding)
+                        4. Pengujian (Testing)
+                        5. Pemeliharaan (Maintenance)
+                    """.trimIndent(),
+                    pageRange = "Hal. 25 - 60"
+                )
+            )
+        )
+    )
+
+    fun filterBooks(
+        level: String,
+        grade: Int,
+        subject: String,
+        curriculum: String,
+        query: String
+    ): List<SibiBook> {
+        return books.filter { book ->
+            val matchesLevel = level == "Semua" || book.schoolLevel.equals(level, ignoreCase = true)
+            val matchesGrade = grade == 0 || book.grade == grade
+            val matchesSubj = subject == "Semua" || book.subject.contains(subject, ignoreCase = true)
+            val matchesCurriculum = curriculum == "Semua" || book.curriculum.contains(curriculum, ignoreCase = true)
+            val matchesQuery = query.isBlank() ||
+                    book.title.contains(query, ignoreCase = true) ||
+                    book.synopsis.contains(query, ignoreCase = true) ||
+                    book.subject.contains(query, ignoreCase = true) ||
+                    book.authors.contains(query, ignoreCase = true)
+            matchesLevel && matchesGrade && matchesSubj && matchesCurriculum && matchesQuery
+        }
+    }
+
+    fun getBookById(id: String): SibiBook? = books.find { it.id == id }
+
+    fun getDistinctSubjects(): List<String> = listOf("Semua", "Matematika", "IPA", "Bahasa Indonesia", "Informatika", "Kejuruan SMK")
+
+    fun getSubjectBookCount(subject: String): Int {
+        if (subject == "Semua") return books.size
+        return books.count { it.subject.contains(subject, ignoreCase = true) }
+    }
+
+    fun getCatalogNotice(subject: String): String? {
+        if (subject == "Semua") return null
+        val count = getSubjectBookCount(subject)
+        return if (count < 5) {
+            "Catatan Target Katalog: Tersedia $count buku resmi terverifikasi SIBI untuk subjek ini. Menampilkan semua buku resmi yang telah diterbitkan oleh Kemendikdasmen."
+        } else {
+            null
+        }
+    }
+}
