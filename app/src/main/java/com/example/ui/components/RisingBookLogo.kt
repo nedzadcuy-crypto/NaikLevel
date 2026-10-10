@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.R
+import com.aistudio.naiklevel.bmedkq.R
 import com.example.ui.theme.BluePrimary
 import com.example.ui.theme.TextPrimary
 import com.example.ui.theme.TextSecondary
