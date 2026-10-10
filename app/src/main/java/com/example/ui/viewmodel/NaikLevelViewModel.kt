@@ -35,7 +35,10 @@ sealed class ExtractionStatus {
     object Idle : ExtractionStatus()
     object Extracting : ExtractionStatus()
     data class Success(val message: String) : ExtractionStatus()
-    data class Error(val message: String, val preservedAttachment: String?) : ExtractionStatus()
+    data class Error(
+        val message: String,
+        val preservedAttachment: String?
+    ) : ExtractionStatus()
 }
 
 data class LearningFilter(
@@ -84,7 +87,8 @@ data class AiTutorMessage(
         get() = basis == AnswerBasis.SIBI_DOCUMENT
 }
 
-class NaikLevelViewModel(application: Application) : AndroidViewModel(application) {
+class NaikLevelViewModel(application: Application) :
+    AndroidViewModel(application) {
 
     private val database = NaikLevelDatabase.getInstance(application)
 
@@ -150,16 +154,13 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
             draftMaterials,
             _learningFilter
         ) { published, drafts, filter ->
-
             val sourceList = when (filter.activeTab) {
                 0 -> published.filter {
                     it.source == "KURIKULUM_NASIONAL"
                 }
-
                 2 -> published.filter {
                     it.source == "USER_CREATED"
                 } + drafts
-
                 else -> emptyList()
             }
 
@@ -234,9 +235,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     val activeSibiBook: StateFlow<SibiBook?> =
         _activeSibiBook.asStateFlow()
 
-    private val _activeSibiChapterIndex =
-        MutableStateFlow(0)
-
+    private val _activeSibiChapterIndex = MutableStateFlow(0)
     val activeSibiChapterIndex: StateFlow<Int> =
         _activeSibiChapterIndex.asStateFlow()
 
@@ -258,9 +257,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     val extractionStatus: StateFlow<ExtractionStatus> =
         _extractionStatus.asStateFlow()
 
-    private val _examSession =
-        MutableStateFlow(ExamSessionState())
-
+    private val _examSession = MutableStateFlow(ExamSessionState())
     val examSession: StateFlow<ExamSessionState> =
         _examSession.asStateFlow()
 
@@ -270,18 +267,17 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     val tutorContextSource: StateFlow<String> =
         _tutorContextSource.asStateFlow()
 
-    private val _tutorMessages =
-        MutableStateFlow(
-            listOf(
-                AiTutorMessage(
-                    sender = "ai",
-                    text = "Halo! Saya Tutor AI NaikLevel. Tanyakan konsep pelajaran atau minta penjelasan materi. Jawaban hanya diberi label bersumber jika benar-benar memakai materi yang tersedia; selain itu akan ditandai sebagai jawaban AI yang belum diverifikasi. Untuk buku resmi, buka katalog SIBI.",
-                    basis = AnswerBasis.INFO,
-                    sourceTitle = "Katalog resmi SIBI",
-                    sourceUrl = SibiLinks.CATALOG_URL
-                )
+    private val _tutorMessages = MutableStateFlow(
+        listOf(
+            AiTutorMessage(
+                sender = "ai",
+                text = "halo! saya tutor ai naiklevel. tanyakan konsep pelajaran atau minta penjelasan materi. jawaban hanya diberi label bersumber jika benar-benar memakai materi yang tersedia.",
+                basis = AnswerBasis.INFO,
+                sourceTitle = "Katalog resmi SIBI",
+                sourceUrl = SibiLinks.CATALOG_URL
             )
         )
+    )
 
     val tutorMessages: StateFlow<List<AiTutorMessage>> =
         _tutorMessages.asStateFlow()
@@ -363,15 +359,11 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun openSibiBook(book: SibiBook) {
         val lastPos = _sibiReadingPositions.value[book.id] ?: 0
-
         _activeSibiBook.value = book
-
-        _activeSibiChapterIndex.value =
-            lastPos.coerceIn(
-                0,
-                (book.chapters.size - 1).coerceAtLeast(0)
-            )
-
+        _activeSibiChapterIndex.value = lastPos.coerceIn(
+            0,
+            (book.chapters.size - 1).coerceAtLeast(0)
+        )
         _tutorContextSource.value = "Buku SIBI: ${book.title}"
     }
 
@@ -380,20 +372,19 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun selectSibiChapter(index: Int) {
-        val book = _activeSibiBook.value
+        val book = _activeSibiBook.value ?: return
+        if (index !in book.chapters.indices) return
+
         _activeSibiChapterIndex.value = index
+        _sibiReadingPositions.value =
+            _sibiReadingPositions.value + (book.id to index)
 
-        if (book != null) {
-            _sibiReadingPositions.value =
-                _sibiReadingPositions.value + (book.id to index)
-
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.awardXp(
-                    "read_sibi_${book.id}_ch_$index",
-                    15,
-                    "Membaca bab resmi SIBI: ${book.title}"
-                )
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.awardXp(
+                "read_sibi_${book.id}_ch_$index",
+                15,
+                "Membaca bab resmi SIBI: ${book.title}"
+            )
         }
     }
 
@@ -420,7 +411,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
         val current = _activeReadingMaterial.value ?: return
 
         viewModelScope.launch(Dispatchers.IO) {
-            repository.updateReadingProgress(current.id, 1.0f)
+            repository.updateReadingProgress(current.id, 1f)
             _activeReadingMaterial.value =
                 repository.getMaterialById(current.id)
 
@@ -435,17 +426,26 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun removeDraftAttachment() {
-        val current = _activeDraftAttachment.value
-
-        if (current != null) {
-            AttachmentManager.deleteAttachment(current.localPath)
-            _activeDraftAttachment.value = null
-            _extractionStatus.value = ExtractionStatus.Idle
+        _activeDraftAttachment.value?.let {
+            AttachmentManager.deleteAttachment(it.localPath)
         }
+        _activeDraftAttachment.value = null
+        _extractionStatus.value = ExtractionStatus.Idle
     }
 
     fun startExtraction() {
-        _extractionStatus.value = ExtractionStatus.Extracting
+        val attachment = _activeDraftAttachment.value
+        if (attachment == null) {
+            _extractionStatus.value = ExtractionStatus.Error(
+                "Pilih lampiran terlebih dahulu.",
+                null
+            )
+            return
+        }
+
+        simulateExtractContent(attachment) { title, content, topic ->
+            _userNotice.value = "Konten lampiran berhasil diproses."
+        }
     }
 
     fun simulateExtractContent(
@@ -460,51 +460,56 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
             _extractionStatus.value = ExtractionStatus.Extracting
             delay(1200)
 
-            val baseName =
-                attachment.displayName.substringBeforeLast(".")
-
-            val formattedTitle = baseName
+            val formattedTitle = attachment.displayName
+                .substringBeforeLast(".")
                 .replace("_", " ")
                 .replace("-", " ")
                 .split(" ")
+                .filter { it.isNotBlank() }
                 .joinToString(" ") {
                     it.replaceFirstChar { c -> c.uppercase() }
                 }
 
-            val topic =
-                if (attachment.displayName.endsWith(".pdf", ignoreCase = true)) {
-                    "Dokumen Belajar Digital"
-                } else {
-                    "Catatan Visual"
-                }
+            val topic = if (
+                attachment.displayName.endsWith(".pdf", ignoreCase = true)
+            ) {
+                "Dokumen Belajar Digital"
+            } else {
+                "Catatan Visual"
+            }
 
             val content = when (attachment.type) {
                 "IMAGE" -> """
                     # $formattedTitle
 
                     ## Ringkasan Catatan Visual
-                    Materi ini berasal dari gambar/foto dokumen (${attachment.displayName}, ${attachment.sizeBytes / 1024} KB).
+
+                    Materi ini berasal dari lampiran gambar
+                    ${attachment.displayName}.
 
                     ### Poin-Poin Utama
-                    - Lampiran tersimpan di penyimpanan internal aplikasi NaikLevel.
-                    - Lampiran gambar dapat dilihat saat membuka materi.
-                    - Tambahkan catatan penjelasan lebih mendalam pada editor.
+                    - Lampiran tersimpan di penyimpanan internal aplikasi.
+                    - Periksa gambar asli untuk membaca isi secara akurat.
+                    - Tambahkan ringkasan materi pada editor.
                 """.trimIndent()
 
                 else -> """
                     # $formattedTitle
 
                     ## Intisari Berkas Dokumen
-                    Dokumen lampiran (${attachment.displayName}, tipe ${attachment.type}) berhasil ditautkan.
+
+                    Dokumen ${attachment.displayName} telah ditautkan.
 
                     ### Pembahasan Materi
-                    - Berkas ditautkan dari folder aplikasi: attachments/${attachment.displayName}.
-                    - Gunakan editor untuk menulis ringkasan atau pertanyaan seputar dokumen.
+                    - Nama berkas: ${attachment.displayName}
+                    - Tipe berkas: ${attachment.type}
+                    - Tambahkan ringkasan isi dokumen pada editor.
                 """.trimIndent()
             }
 
-            _extractionStatus.value =
-                ExtractionStatus.Success("Konten berhasil diolah dari lampiran.")
+            _extractionStatus.value = ExtractionStatus.Success(
+                "Konten berhasil diolah dari lampiran."
+            )
 
             onExtracted(formattedTitle, content, topic)
         }
@@ -530,7 +535,7 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
             return
         }
 
-        val draftAtt = _activeDraftAttachment.value
+        val attachment = _activeDraftAttachment.value
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.saveMaterial(
@@ -542,27 +547,23 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
                 subject = subject,
                 topic = topic.trim(),
                 isDraft = isDraft,
-                attachmentName = draftAtt?.displayName,
-                attachmentNote = draftAtt?.let {
+                attachmentName = attachment?.displayName,
+                attachmentNote = attachment?.let {
                     "${it.type} (${it.sizeBytes / 1024} KB)"
                 },
-                attachmentPath = draftAtt?.localPath,
-                attachmentType = draftAtt?.type
+                attachmentPath = attachment?.localPath,
+                attachmentType = attachment?.type
             )
 
             _activeDraftAttachment.value = null
             _extractionStatus.value = ExtractionStatus.Idle
-
-            _userNotice.value =
-                if (isDraft) {
-                    "Draft materi berhasil disimpan."
-                } else {
-                    "Materi baru berhasil diterbitkan!"
-                }
-
-            viewModelScope.launch(Dispatchers.Main) {
-                onSuccess()
+            _userNotice.value = if (isDraft) {
+                "Draft materi berhasil disimpan."
+            } else {
+                "Materi baru berhasil diterbitkan!"
             }
+
+            onSuccess()
         }
     }
 
@@ -576,44 +577,39 @@ class NaikLevelViewModel(application: Application) : AndroidViewModel(applicatio
     fun claimQuest(quest: QuestEntity) {
         viewModelScope.launch(Dispatchers.IO) {
             val success = repository.claimQuest(quest.id)
-
-            _userNotice.value =
-                if (success) {
-                    "Berhasil mengklaim +${quest.xpReward} XP untuk quest: ${quest.title}!"
-                } else {
-                    "Quest belum selesai atau sudah pernah diklaim sebelumnya."
-                }
+            _userNotice.value = if (success) {
+                "Berhasil mengklaim +${quest.xpReward} XP untuk quest: ${quest.title}!"
+            } else {
+                "Quest belum selesai atau sudah pernah diklaim sebelumnya."
+            }
         }
     }
 
-    fun startExamSimulation(
-        schoolLevel: String,
-        subject: String = "Semua"
-    ) {
-        val questions = ExamBank
-            .getQuestionsByFilter(schoolLevel, subject)
-            .shuffled()
-            .take(5)
+    fun updateProfile(name: String, level: String, grade: Int) {
+        if (name.isBlank()) {
+            _userNotice.value = "Nama profil tidak boleh kosong."
+            return
+        }
 
-        _examSession.value = ExamSessionState(
-            isActive = true,
-            questions = questions,
-            currentQuestionIndex = 0,
-            userAnswers = emptyMap(),
-            remainingSeconds = 300,
-            isUntimed = false,
-            isSubmitted = false,
-            score = 0,
-            correctCount = 0,
-            earnedXp = 0,
-            subject = subject,
-            schoolLevel = schoolLevel,
-            sourceMaterialTitle = null,
-            isCustomExam = false
-        )
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateProfile(name.trim(), level, grade)
+            _userNotice.value = "Profil berhasil diperbarui."
+        }
     }
 
-    fun startCustomExam(config: CustomExamConfig) {
-        when (
-            val result = CustomExamGenerator.generateQuestions(
-                mate
+    fun triggerSyncCheck() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.updateSyncStatus("LOCAL_ONLY")
+            _userNotice.value =
+                "Data lokal sudah diperiksa. Sinkronisasi cloud belum tersedia."
+        }
+    }
+
+    fun resetData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.resetLearningData()
+            _examSession.value = ExamSessionState()
+            _activeReadingMaterial.value = null
+            _activeSibiBook.value = null
+            _activeDraftAttachment.value = null
+            _extractionStatus.value = ExtractionStatus.Idle
