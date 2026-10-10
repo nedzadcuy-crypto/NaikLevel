@@ -11,8 +11,8 @@ plugins {
 }
 
 android {
-  namespace = "com.example"
-  compileSdk { version = release(36) { minorApiLevel = 1 } }
+  namespace = "com.aistudio.naiklevel.bmedkq"
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "com.aistudio.naiklevel.bmedkq"
@@ -39,7 +39,7 @@ android {
     buildConfigField(
       "String",
       "GOOGLE_WEB_CLIENT_ID",
-      "\"${envValue("GOOGLE_WEB_CLIENT_ID")}\""
+      "\"${envValue("GOOGLE_WEB_CLIENT_ID", "")}\""
     )
 
     buildConfigField(
