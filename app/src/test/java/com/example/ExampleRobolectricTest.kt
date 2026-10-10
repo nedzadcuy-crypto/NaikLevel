@@ -2,6 +2,7 @@ package com.example
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.aistudio.naiklevel.bmedkq.R
 import com.example.data.model.ExamBank
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
