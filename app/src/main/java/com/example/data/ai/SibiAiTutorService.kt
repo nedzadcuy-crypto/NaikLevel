@@ -275,7 +275,7 @@ class SibiAiTutorService {
     companion object {
         private const val TAG = "SibiAiTutorService"
         /** Model dapat diganti; pastikan tersedia di Firebase AI Logic untuk proyekmu. */
-        val MODEL_NAME: String get() = com.aistudio.naiklevel.bmedkq.BuildConfig.AI_MODEL_NAME { "gemini-3.8-flash" }
+        val MODEL_NAME: String get() = com.aistudio.naiklevel.bmedkq.BuildConfig.AI_MODEL_NAME .ifBlank { "gemini-3.8-flash" }
         private const val MAX_QUESTION_CHARS = 1000
         private const val MIN_INTERVAL_MS = 1500L
         private const val TIMEOUT_MS = 30_000L
