@@ -1,3 +1,4 @@
+
 package com.example.ui
 
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.data.model.SibiCatalog
 import com.example.ui.components.AiTutorBottomSheet
 import com.example.ui.components.NaikLevelBottomBar
 import com.example.ui.navigation.Screen
@@ -48,17 +50,10 @@ fun NaikLevelApp(
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Home.route
+    val currentRoute =
+        navBackStackEntry?.destination?.route ?: Screen.Home.route
 
     val userProgress by viewModel.userProgress.collectAsStateWithLifecycle()
-
-    // Sinkronkan nama akun ke profil lokal hanya saat nama masih bawaan.
-    LaunchedEffect(accountName, userProgress?.userName) {
-        val up = userProgress
-        if (accountName.isNotBlank() && up != null && up.userName == "Pelajar Indonesia") {
-            viewModel.updateProfile(accountName, up.schoolLevel, up.grade)
-        }
-    }
     val publishedMaterials by viewModel.publishedMaterials.collectAsStateWithLifecycle()
     val draftMaterials by viewModel.draftMaterials.collectAsStateWithLifecycle()
     val filteredMaterials by viewModel.filteredMaterials.collectAsStateWithLifecycle()
@@ -82,6 +77,21 @@ fun NaikLevelApp(
     val snackbarHostState = remember { SnackbarHostState() }
     var showAiTutorSheet by remember { mutableStateOf(false) }
 
+    LaunchedEffect(accountName, userProgress?.userName) {
+        val progress = userProgress
+        if (
+            accountName.isNotBlank() &&
+            progress != null &&
+            progress.userName == "Pelajar Indonesia"
+        ) {
+            viewModel.updateProfile(
+                accountName,
+                progress.schoolLevel,
+                progress.grade
+            )
+        }
+    }
+
     LaunchedEffect(userNotice) {
         userNotice?.let { notice ->
             snackbarHostState.showSnackbar(notice)
@@ -89,21 +99,25 @@ fun NaikLevelApp(
         }
     }
 
-    // Determine if bottom bar should be visible (only for main 5 top destinations)
-    val isBottomBarVisible = currentRoute in Screen.bottomNavDestinations.map { it.route } &&
+    val isBottomBarVisible =
+        currentRoute in Screen.bottomNavDestinations.map { it.route } &&
             activeReadingMaterial == null &&
             activeSibiBook == null &&
             !examSession.isActive
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         bottomBar = {
             if (isBottomBarVisible) {
                 NaikLevelBottomBar(
                     currentRoute = currentRoute,
                     onNavigate = { targetRoute ->
                         navController.navigate(targetRoute) {
-                            popUpTo(navController.graph.findStartDestination().id) {
+                            popUpTo(
+                                navController.graph.findStartDestination().id
+                            ) {
                                 saveState = true
                             }
                             launchSingleTop = true
@@ -119,20 +133,20 @@ fun NaikLevelApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            // Main Navigation Host
             NavHost(
                 navController = navController,
                 startDestination = Screen.Home.route,
                 modifier = Modifier.fillMaxSize()
             ) {
-                // 1. Beranda
                 composable(Screen.Home.route) {
                     HomeScreen(
                         userProgress = userProgress,
                         recentMaterial = recentMaterial,
-                        dailyQuests = allQuests.filter { it.type == "DAILY" },
-                        onOpenMaterial = { mat ->
-                            viewModel.openMaterialForReading(mat)
+                        dailyQuests = allQuests.filter {
+                            it.type == "DAILY"
+                        },
+                        onOpenMaterial = { material ->
+                            viewModel.openMaterialForReading(material)
                         },
                         onClaimQuest = { quest ->
                             viewModel.claimQuest(quest)
@@ -142,7 +156,11 @@ fun NaikLevelApp(
                         },
                         onNavigateToLearn = {
                             navController.navigate(Screen.Learn.route) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                popUpTo(
+                                    navController.graph.findStartDestination().id
+                                ) {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -156,21 +174,32 @@ fun NaikLevelApp(
                     )
                 }
 
-                // 2. Belajar
                 composable(Screen.Learn.route) {
                     LearningScreen(
                         materials = filteredMaterials,
                         sibiBooks = filteredSibiBooks,
                         filter = learningFilter,
                         sibiReadingPositions = sibiReadingPositions,
-                        onFilterTabChange = { viewModel.setFilterTab(it) },
-                        onFilterSchoolLevelChange = { viewModel.setFilterSchoolLevel(it) },
-                        onFilterGradeChange = { viewModel.setFilterGrade(it) },
-                        onFilterSubjectChange = { viewModel.setFilterSubject(it) },
-                        onFilterCurriculumChange = { viewModel.setFilterCurriculum(it) },
-                        onSearchQueryChange = { viewModel.setSearchQuery(it) },
-                        onOpenMaterial = { mat ->
-                            viewModel.openMaterialForReading(mat)
+                        onFilterTabChange = {
+                            viewModel.setFilterTab(it)
+                        },
+                        onFilterSchoolLevelChange = {
+                            viewModel.setFilterSchoolLevel(it)
+                        },
+                        onFilterGradeChange = {
+                            viewModel.setFilterGrade(it)
+                        },
+                        onFilterSubjectChange = {
+                            viewModel.setFilterSubject(it)
+                        },
+                        onFilterCurriculumChange = {
+                            viewModel.setFilterCurriculum(it)
+                        },
+                        onSearchQueryChange = {
+                            viewModel.setSearchQuery(it)
+                        },
+                        onOpenMaterial = { material ->
+                            viewModel.openMaterialForReading(material)
                         },
                         onOpenSibiBook = { book ->
                             viewModel.openSibiBook(book)
@@ -183,8 +212,20 @@ fun NaikLevelApp(
                         },
                         onStartExamSimulation = {
                             viewModel.startExamSimulation(
-                                schoolLevel = if (learningFilter.schoolLevel != "Semua") learningFilter.schoolLevel else (userProgress?.schoolLevel ?: "SMA"),
-                                subject = if (learningFilter.subject != "Semua") learningFilter.subject else "Semua"
+                                schoolLevel = if (
+                                    learningFilter.schoolLevel != "Semua"
+                                ) {
+                                    learningFilter.schoolLevel
+                                } else {
+                                    userProgress?.schoolLevel ?: "SMA"
+                                },
+                                subject = if (
+                                    learningFilter.subject != "Semua"
+                                ) {
+                                    learningFilter.subject
+                                } else {
+                                    "Semua"
+                                }
                             )
                         },
                         onDeleteMaterial = { id ->
@@ -193,7 +234,6 @@ fun NaikLevelApp(
                     )
                 }
 
-                // 3. Quest
                 composable(Screen.Quest.route) {
                     QuestScreen(
                         userProgress = userProgress,
@@ -204,7 +244,6 @@ fun NaikLevelApp(
                     )
                 }
 
-                // 4. Statistik
                 composable(Screen.Stats.route) {
                     StatisticsScreen(
                         materials = filteredMaterials,
@@ -212,7 +251,6 @@ fun NaikLevelApp(
                     )
                 }
 
-                // 5. Profil
                 composable(Screen.Profile.route) {
                     ProfileScreen(
                         userProgress = userProgress,
@@ -235,35 +273,46 @@ fun NaikLevelApp(
                     )
                 }
 
-                // Subscreen: Create Material
                 composable("create_material") {
                     MaterialCreateScreen(
                         currentAttachment = activeDraftAttachment,
                         extractionStatus = extractionStatus,
-                        onSetAttachment = { att ->
-                            viewModel.setDraftAttachment(att)
+                        onSetAttachment = { attachment ->
+                            if (attachment != null) {
+                                viewModel.setDraftAttachment(attachment)
+                            } else {
+                                viewModel.removeDraftAttachment()
+                            }
                         },
                         onRemoveAttachment = {
                             viewModel.removeDraftAttachment()
                         },
-                        onStartExtraction = { type, input, attName, shouldFail ->
-                            viewModel.simulateExtractContent(type, input, attName, shouldFail)
+                        onStartExtraction = { _, _, _, _ ->
+                            viewModel.startExtraction()
                         },
                         onResetExtraction = {
-                            viewModel.resetExtractionStatus()
+                            viewModel.clearExtractionStatus()
                         },
-                        onSaveMaterial = { title, desc, content, level, grade, subject, topic, isDraft, att, attNote ->
+                        onSaveMaterial = {
+                                title,
+                                description,
+                                content,
+                                level,
+                                grade,
+                                subject,
+                                topic,
+                                isDraft,
+                                _,
+                                _ ->
                             viewModel.saveCreatedMaterial(
                                 title = title,
-                                description = desc,
+                                description = description,
                                 content = content,
                                 schoolLevel = level,
                                 grade = grade,
                                 subject = subject,
                                 topic = topic,
                                 isDraft = isDraft,
-                                attachment = att,
-                                attachmentNote = attNote,
                                 onSuccess = {
                                     navController.popBackStack()
                                 }
@@ -275,7 +324,6 @@ fun NaikLevelApp(
                     )
                 }
 
-                // Subscreen: Custom Exam Builder
                 composable("custom_exam_builder") {
                     CustomExamBuilderScreen(
                         materials = publishedMaterials + draftMaterials,
@@ -290,7 +338,6 @@ fun NaikLevelApp(
                     )
                 }
 
-                // Subscreen: About Screen
                 composable("about") {
                     AboutScreen(
                         onBack = {
@@ -300,13 +347,18 @@ fun NaikLevelApp(
                 }
             }
 
-            // Interactive Fullscreen Overlays: Material Reader
             activeReadingMaterial?.let { material ->
                 MaterialReaderScreen(
                     material = material,
-                    onBack = { viewModel.closeReading() },
-                    onProgressUpdate = { p -> viewModel.updateActiveReadingProgress(p) },
-                    onMarkCompleted = { viewModel.markCurrentMaterialFinished() },
+                    onBack = {
+                        viewModel.closeReading()
+                    },
+                    onProgressUpdate = { progress ->
+                        viewModel.updateActiveReadingProgress(progress)
+                    },
+                    onMarkCompleted = {
+                        viewModel.markCurrentMaterialFinished()
+                    },
                     onAskAiTutor = { prompt ->
                         viewModel.sendAiTutorQuestion(prompt)
                         showAiTutorSheet = true
@@ -314,40 +366,58 @@ fun NaikLevelApp(
                 )
             }
 
-            // Interactive Fullscreen Overlays: SIBI Book Reader
-            activeSibiBook?.let { sibiBook ->
+            activeSibiBook?.let { book ->
                 SibiBookReaderScreen(
-                    book = sibiBook,
+                    book = book,
                     currentChapterIndex = activeSibiChapterIndex,
-                    onSelectChapter = { idx -> viewModel.selectSibiChapter(idx) },
+                    onSelectChapter = { index ->
+                        viewModel.selectSibiChapter(index)
+                    },
                     onAskAiAboutBook = { prompt ->
-                        viewModel.sendAiTutorQuestion(prompt, explicitSource = "Buku SIBI: ${sibiBook.title}")
+                        viewModel.sendAiTutorQuestion(
+                            prompt,
+                            explicitSource = "Buku SIBI: ${book.title}"
+                        )
                         showAiTutorSheet = true
                     },
-                    onBack = { viewModel.closeSibiBook() }
+                    onBack = {
+                        viewModel.closeSibiBook()
+                    }
                 )
             }
 
-            // Interactive Fullscreen Overlays: Exam Simulation
             if (examSession.isActive) {
                 ExamSimulationScreen(
                     session = examSession,
-                    onSelectAnswer = { qId, optIdx -> viewModel.selectExamAnswer(qId, optIdx) },
-                    onNextQuestion = { viewModel.nextExamQuestion() },
-                    onPrevQuestion = { viewModel.previousExamQuestion() },
-                    onSubmitExam = { viewModel.submitExamSimulation() },
-                    onCloseExam = { viewModel.closeExamSession() }
+                    onSelectAnswer = { questionId, optionIndex ->
+                        viewModel.selectExamAnswer(questionId, optionIndex)
+                    },
+                    onNextQuestion = {
+                        viewModel.nextExamQuestion()
+                    },
+                    onPrevQuestion = {
+                        viewModel.previousExamQuestion()
+                    },
+                    onSubmitExam = {
+                        viewModel.submitExamSimulation()
+                    },
+                    onCloseExam = {
+                        viewModel.closeExamSession()
+                    }
                 )
             }
 
-            // BottomSheet: AI Tutor
             if (showAiTutorSheet) {
                 AiTutorBottomSheet(
                     messages = tutorMessages,
                     isThinking = isTutorThinking,
                     contextSource = tutorContextSource,
-                    onSendMessage = { query -> viewModel.sendAiTutorQuestion(query) },
-                    onDismiss = { showAiTutorSheet = false }
+                    onSendMessage = { query ->
+                        viewModel.sendAiTutorQuestion(query)
+                    },
+                    onDismiss = {
+                        showAiTutorSheet = false
+                    }
                 )
             }
         }
