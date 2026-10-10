@@ -613,3 +613,6 @@ class NaikLevelViewModel(application: Application) :
             _activeSibiBook.value = null
             _activeDraftAttachment.value = null
             _extractionStatus.value = ExtractionStatus.Idle
+        }
+    }
+}
