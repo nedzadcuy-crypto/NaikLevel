@@ -1,4 +1,4 @@
-name: Android CI
+upname: Android CI
 
 on:
   push:
@@ -40,10 +40,11 @@ jobs:
 
       # Repo ini belum menyertakan gradlew / gradle-wrapper.jar (file biner). Buat jika belum ada.
       # Setelah berjalan, sebaiknya commit gradlew, gradlew.bat, dan gradle/wrapper/gradle-wrapper.jar.
-      - name: Generate Gradle wrapper if missing
-        run: |
-          if [ ! -f gradlew ]; then gradle wrapper --gradle-version 9.3.1; fi
-          chmod +x gradlew
+          - name: Build debug APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Run unit tests
+        run: gradle testDebugUnitTest --stacktrace
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
