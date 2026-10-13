@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "372446121255",
+    "project_id": "naiklevel-83b18",
+    "storage_bucket": "naiklevel-83b18.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:372446121255:android:d09ce857acd683edfd6d02",
+        "android_client_info": {
+          "package_name": "com.aistudio.naiklevel.bmedkq"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "372446121255-vbtkdag90u4o72tacvqq9fh7fm9s47mh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.aistudio.naiklevel.bmedkq",
+            "certificate_hash": "ed00019b3540384a1228f5d1284e33c3a49a8260"
+          }
+        },
+        {
+          "client_id": "372446121255-880mfesgd5r2g9tvq3sk94jcoef91emu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfKpAL-1oa_idi8GX2elsBOFMRpwhniHY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "372446121255-880mfesgd5r2g9tvq3sk94jcoef91emu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
