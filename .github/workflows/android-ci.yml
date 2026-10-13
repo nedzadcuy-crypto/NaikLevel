@@ -41,10 +41,10 @@ jobs:
         with:
           gradle-version: "9.3.1"
 
-      - name: Build debug APK
+            - name: Build debug APK
         run: gradle assembleDebug --stacktrace
 
-              - name: Generate SHA-1
+      - name: Generate SHA-1
         run: |
           mkdir -p "$HOME/.android"
           if [ ! -f "$HOME/.android/debug.keystore" ]; then
